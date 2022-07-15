@@ -13,16 +13,16 @@ from rasterio.merge import merge
 from skimage.color import rgba2rgb
 
 @click.command()
-@click.option('--tifsource',help='Number of greetings.')
-@click.option('--model', help='Tilesize model')
+@click.option('--tifsource',help='Path to the input tiff-file.')
+@click.option('--model', help='Path to the model which should be used. (should take the same input dimensions as the tilesize specified)')
 @click.option('--prediction_threshold', default=0.5, help='The probability threshold applied when predicting the binary mask. Use False to output probabilities.')
-@click.option('--targetdir', help='Folder where the output is stored')
-@click.option('--preprocess', default="DeepLabV3", help='Tilesize model')
-@click.option('--tilesize', default=512, help='Tilesize model')
-@click.option('--overlap', default=0, required=False, help='Overlap percentage for prediction')
-@click.option('--drop_alpha_threshold', required=False, default=0.0, help='Drop tile if transparent.')
-@click.option('--rowlimit', default=-1, required=False, help='Number of rows to read from input tiff (with size <tilesize>')
-@click.option('--merge', default=True, required=False, help='Merge masks')
+@click.option('--targetdir', help='Folder where the output should be stored.')
+@click.option('--preprocess', default="DeepLabV3", help='Type of preprocessing to perform.')
+@click.option('--tilesize', default=512, help='Tilesize used to tile the input tifsource.')
+@click.option('--overlap', default=0, required=False, help='Overlap percentage used to tile the input (0=no overlap).')
+@click.option('--drop_alpha_threshold', required=False, default=0.0, help='Use to drop tiles with a set ratio of alpha values (default 0 exclusively drops tiles that are fully transparant).')
+@click.option('--rowlimit', default=-1, required=False, help='Number of rows of size <tilesize> to read from the input tif.')
+@click.option('--merge', default=True, required=False, help='Merge the final predictions into one rasterfile.')
 
 
 def predict_controler(tifsource, model, prediction_threshold, targetdir, preprocess, tilesize, rowlimit, overlap, drop_alpha_threshold, merge):
@@ -64,6 +64,8 @@ def predict_controler(tifsource, model, prediction_threshold, targetdir, preproc
 
     if merge:
         merge_masks(targetdir)
+
+
 
 def merge_masks(targetdir):
     path = f'{targetdir}/*_mask.tif'
