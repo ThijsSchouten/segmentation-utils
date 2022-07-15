@@ -1,0 +1,6 @@
+# exclude everything
+input/*
+!input/.gitkeep 
+
+models/*
+!models/.gitkeep 
